@@ -1,8 +1,6 @@
 #!/bin/bash
-
 # checkNodeNpm.sh
 
-# Function to check if a command is installed
 check_command() {
     command -v "$1" >/dev/null 2>&1
 }

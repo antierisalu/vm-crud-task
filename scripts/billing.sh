@@ -1,6 +1,11 @@
 #!/bin/bash
 #billing.sh
 
+if ! /vagrant/scripts/checkPostgres.sh; then
+    echo "PostgreSQL check failed."
+    exit 1
+fi
+
 if /vagrant/scripts/checkNodeNpm.sh; then
     cd $BILLING_DIR || exit
 
@@ -8,33 +13,25 @@ if /vagrant/scripts/checkNodeNpm.sh; then
         echo "Local dependencies probably installed."
     else
         echo "Installing local dependencies..."
-        npm install  # Install local dependencies defined in package.json
+        npm install express amqplib dotenv
     fi
-
-    # Check if global dependencies are installed
-    if ! npm list -g --depth=0 | grep -q -E 'express|amqlib|dotenv'; then
-        echo "Installing global dependencies..."
-        npm install -g express amqplib dotenv
-    else
-        echo "Global dependencies are already installed."
-    fi
-
 else
     echo "Node.js and npm check failed."
     exit 1
 fi
 
 # Check for RabbitMQ
-if command -v rabbitmq-server >/dev/null 2>&1; then
-        echo "RabbitMQ installed successfully: $(rabbitmq-server --version)"
+if command -v rabbitmqctl >/dev/null 2>&1; then
+        echo "RabbitMQ installed successfully: $(rabbitmqctl --version)"
 else
     echo "RabbitMQ is not installed. Installing..."
     curl -fsSL https://dl.rabbitmq.com/DEB-RabbitMQ.asc | sudo apt-key add -
 echo "deb https://dl.bintray.com/rabbitmq/debian focal main" | sudo tee /etc/apt/sources.list.d/rabbitmq.list
     sudo apt-get update
     sudo apt-get install -y rabbitmq-server
-    sudo systemctl enable --now rabbitmq-server
-
+    sudo systemctl enable rabbitmq-server
+    sudo systemctl start rabbitmq-server
+    
     # Verify installation
     if command -v rabbitmq-server >/dev/null 2>&1; then
         echo "RabbitMQ installed successfully: $(rabbitmq-server --version)"
@@ -44,7 +41,6 @@ echo "deb https://dl.bintray.com/rabbitmq/debian focal main" | sudo tee /etc/apt
     fi
 fi
 
-echo "RabbitMQ setup complete."
 
 
 

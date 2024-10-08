@@ -25,24 +25,9 @@ else
     exit 1
 fi
 
-# Check for PostgreSQL
-if command -v psql >/dev/null 2>&1; then
-        echo "PostgreSQL installed successfully: $(psql --version)"
-else
-    echo "PostgreSQL is not installed. Installing..."
-    sudo apt install -y postgresql postgresql-contrib
-    sudo systemctl enable --now postgresql
+/vagrant/scripts/checkPostgres.sh
 
-    # Verify installation
-    if command -v psql >/dev/null 2>&1; then
-        echo "PostgreSQL installed successfully: $(psql --version)"
-    else
-        echo "PostgreSQL installation failed."
-        exit 1
-    fi
-fi
 
-echo "PostgreSQL setup complete."
 
 
 
