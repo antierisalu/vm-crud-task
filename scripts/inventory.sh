@@ -2,10 +2,9 @@
 #inventory.sh
 
 if /vagrant/scripts/checkNodeNpm.sh; then
-    # Navigate to the project directory
-    cd /vagrant/api-gateway || exit
 
-    # Check if local dependencies are installed
+    cd $INVENTORY_DIR || exit
+
     if [ -d "node_modules" ]; then
         echo "Local dependencies probably installed."
     else
@@ -21,9 +20,6 @@ if /vagrant/scripts/checkNodeNpm.sh; then
         echo "Global dependencies are already installed."
     fi
 
-    # Start the server
-    echo "Starting gateway..."
-    npm start &
 else
     echo "Node.js and npm check failed."
     exit 1

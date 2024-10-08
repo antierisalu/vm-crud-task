@@ -1,13 +1,10 @@
 #!/bin/bash
 #gateway.sh
 
-# Run the Node.js and npm check script
-if  /vagrant/scripts/checkNodeNpm.sh; then
-    echo "hello"
-    # Navigate to the project directory
-    cd /vagrant/api-gateway || exit
+if /vagrant/scripts/checkNodeNpm.sh; then
 
-    # Check if local dependencies are installed
+    cd $GATEWAY_DIR || exit
+
     if [ -d "node_modules" ]; then
         echo "Local dependencies probably installed."
     else
@@ -16,24 +13,14 @@ if  /vagrant/scripts/checkNodeNpm.sh; then
     fi
 
     # Check if global dependencies are installed
-    if ! npm list -g --depth=0 | grep -q -E 'express|axios|dotenv'; then
+    if ! npm list -g --depth=0 | grep -q -E 'express|axios|dotenv|nodemon'; then
         echo "Installing global dependencies..."
-        npm install -g express axios dotenv
+        npm install -g express axios dotenv nodemon
     else
         echo "Global dependencies are already installed."
     fi
 
-    # Start the server
-    echo "Starting gateway..."
-    npm start &
 else
     echo "Node.js and npm check failed."
     exit 1
 fi
-
-
-
-
-
-
-

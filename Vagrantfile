@@ -5,58 +5,30 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "base"
 
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
+    # Load environment variables from .env file
+  env_vars = File.readlines('.env').map(&:strip).reject(&:empty?).map do |line|
+    if line.include?("=")
+      line.split("=", 2)
+    else
+      nil
+    end
+  end.compact.to_h
 
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # NOTE: This will enable public access to the opened port
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine and only allow access
-  # via 127.0.0.1 to disable public access
-  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
-
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
-
-  # Disable the default share of the current code directory. Doing this
-  # provides improved isolation between the vagrant box and your host
-  # by making sure your Vagrantfile isn't accessible to the vagrant box.
-  # If you use this you may want to enable additional shared subfolders as
-  # shown above.
-  # config.vm.synced_folder ".", "/vagrant", disabled: true
-
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
+  config.vm.provision "shell", inline: <<-SHELL
+    #{env_vars.map { |k, v| "echo 'export #{k}=#{v}' >> /etc/environment" }.join("\n")}
+    source /etc/environment
+  SHELL
 
   config.vm.define "gateway" do |gate|
     config.vm.box = "ubuntu/focal64"
     gate.vm.hostname = "gateway"
     gate.vm.network "forwarded_port", guest: 3000, host: 3000  # API Gateway port
     gate.vm.provision "shell", path: "./scripts/gateway.sh"
+    gate.vm.provision "shell", inline: <<-SHELL
+      cd $GATEWAY_DIR
+      npm start &
+      echo "Gateway npm started.."
+    SHELL
   end
 
   config.vm.define "inventory" do |inv|
@@ -64,6 +36,11 @@ Vagrant.configure("2") do |config|
     inv.vm.hostname = "inventory"
     inv.vm.network "forwarded_port", guest: 4000, host: 4000  # inventory API port
     inv.vm.provision "shell", path: "./scripts/inventory.sh"
+    inv.vm.provision "shell", inline: <<-SHELL
+      cd $INVENTORY_DIR
+      npm start &
+      echo "Inventory npm started.."
+    SHELL
   end
 
   config.vm.define "billing" do |bill|

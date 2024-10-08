@@ -1,5 +1,5 @@
 {
-  "name": "api-gateway",
+  "name": "billing",
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",
@@ -11,7 +11,10 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "devDependencies": {
-    "http-server": "^14.1.1"
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "pg": "^8.13.0"
   }
 }
