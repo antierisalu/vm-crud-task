@@ -1,5 +1,4 @@
 import express from 'express';
-import { json, urlencoded } from 'body-parser';
 import { Sequelize, DataTypes } from 'sequelize';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -7,10 +6,7 @@ dotenv.config();
 const app = express();
 const port = process.env.INVENTORY_PORT;
 
-// Middleware
-app.use(json());
-app.use(urlencoded({ extended: true }));
-
+app.use(express.json());
 
 // Database connection
 const sequelize = new Sequelize(
@@ -25,7 +21,7 @@ const sequelize = new Sequelize(
 );
 
 // Define Movie model
-const Movie = sequelize.define('Movie', {
+const Movie = sequelize.define('movie', {
   title: {
     type: DataTypes.STRING,
     allowNull: false
@@ -37,14 +33,11 @@ const Movie = sequelize.define('Movie', {
 });
 
 // Sync database
-sequelize.sync({ force: true })
-  .then(() => {
-    console.log('Database & tables created!');
-  });
+sequelize.sync()
 
 // Routes
 // GET all movies
-app.get('/api/movies', async (req, res) => {
+app.get('/movies', async (req, res) => {
   try {
     const { title } = req.query;
     let movies;
@@ -60,7 +53,7 @@ app.get('/api/movies', async (req, res) => {
 });
 
 // POST new movie
-app.post('/api/movies', async (req, res) => {
+app.post('/movies', async (req, res) => {
   try {
     const movie = await Movie.create(req.body);
     res.status(201).json(movie);
@@ -70,7 +63,7 @@ app.post('/api/movies', async (req, res) => {
 });
 
 // DELETE all movies
-app.delete('/api/movies', async (req, res) => {
+app.delete('/movies', async (req, res) => {
   try {
     await Movie.destroy({ where: {} });
     res.status(204).send();
@@ -80,7 +73,7 @@ app.delete('/api/movies', async (req, res) => {
 });
 
 // GET movie by id
-app.get('/api/movies/:id', async (req, res) => {
+app.get('/movies/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
     if (movie) {
@@ -94,7 +87,7 @@ app.get('/api/movies/:id', async (req, res) => {
 });
 
 // PUT update movie
-app.put('/api/movies/:id', async (req, res) => {
+app.put('/movies/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
     if (movie) {
@@ -109,7 +102,7 @@ app.put('/api/movies/:id', async (req, res) => {
 });
 
 // DELETE movie by id
-app.delete('/api/movies/:id', async (req, res) => {
+app.delete('/movies/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
     if (movie) {

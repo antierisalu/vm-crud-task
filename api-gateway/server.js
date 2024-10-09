@@ -1,20 +1,40 @@
-import { createServer } from 'http';
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import dotenv from 'dotenv';
 
-const hostname = '0.0.0.0'; // Listen on all interfaces
-const port = process.env.GATEWAY_PORT;
+dotenv.config();
 
-let requestCount = 0;
+const app = express();
+const port = process.env.GATEWAY_PORT // Default to 3000 if not set
 
-const server = createServer((req, res) => {
-
-    requestCount++;
-    const timestamp = new Date().toISOString();
-    
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end(`Request #${requestCount} at ${timestamp}\nGATEWAY_MSG: ${process.env.GATEWAY_MSG}`);
+// Proxy for /movies
+const inventoryProxy = createProxyMiddleware({
+    target: process.env.GATEWAY_INVENTORY_URL,
+    changeOrigin: true,
+    logLevel: 'debug',
+    onError: (err, req, res) => {
+        console.error('Proxy Error (Inventory):', err.message, req.url);
+        res.status(500).send(`Proxy Error (Inventory): ${err.message}`);
+    }
 });
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+// Proxy for /billing
+const billingProxy = createProxyMiddleware({
+    target: process.env.GATEWAY_BILLING_URL,
+    changeOrigin: true,
+    logLevel: 'debug',
+    onError: (err, req, res) => {
+        console.error('Proxy Error (Billing):', err);
+        res.status(500).send('Proxy Error (Billing)');
+    }
+});
+
+// Use the proxy middleware for all routes
+app.use('/movies', inventoryProxy);
+app.use('/billing', billingProxy);
+
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Proxy server running at http://${process.env.GATEWAY_HOST}:${port}/`);
+    console.log(`Proxying /movies requests to ${process.env.GATEWAY_INVENTORY_URL}`);
+    console.log(`Proxying /billing requests to ${process.env.GATEWAY_BILLING_URL}`);
 });
