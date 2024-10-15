@@ -16,24 +16,12 @@ else
 
     if check_command node; then
         echo "Node.js installed successfully: $(node -v)"
+        
+        npm install -g pm2
+        
+        echo "Npm installed successfully: $(npm -v)"
     else
         echo "Node.js installation failed."
-        exit 1
-    fi
-fi
-
-# Check for npm
-if check_command npm; then
-    echo "npm is already installed: $(npm -v)"
-else
-    echo "npm is not installed. Installing..."
-    apt install -y npm
-
-    if check_command npm; then
-        echo "npm installed successfully: $(npm -v)"
-        # Install necessary npm packages if npm is installed
-    else
-        echo "npm installation failed."
         exit 1
     fi
 fi

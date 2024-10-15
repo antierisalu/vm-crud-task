@@ -13,12 +13,12 @@ app.use(express.json());
 // Ensure the orders table exists when the server starts
 ensureOrdersTableExists();
 
-app.post('/orders', async (req, res) => {
+app.post('/', async (req, res) => {
   const order = req.body;
   console.log('Received order:', order);
 
   try {
-    const conn = await connect(`amqp://${process.env.RABBITMQ_HOST}`);
+    const conn = await connect('amqp://localhost');
     const channel = await conn.createChannel();
     const queue = 'orders_queue';
 

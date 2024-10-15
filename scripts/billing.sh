@@ -11,7 +11,7 @@ if $SCRIPT_DIR/checkNodeNpm.sh; then
         echo "Local dependencies probably installed."
     else
         echo "Installing local dependencies..."
-        npm install express amqplib dotenv
+        npm install express amqplib dotenv concurrently
     fi
 else
     echo "Node.js and npm check failed."
@@ -38,6 +38,8 @@ else
         exit 1
     fi
 fi
+
+
 
 
 

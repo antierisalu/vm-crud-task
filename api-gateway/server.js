@@ -19,6 +19,7 @@ const inventoryProxy = createProxyMiddleware({
 });
 
 // Proxy for /billing
+console.log(process.env.GATEWAY_BILLING_URL);
 const billingProxy = createProxyMiddleware({
     target: process.env.GATEWAY_BILLING_URL,
     changeOrigin: true,

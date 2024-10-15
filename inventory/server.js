@@ -14,7 +14,7 @@ const sequelize = new Sequelize(
   process.env.INVENTORY_DB_USER,
   process.env.INVENTORY_DB_PASSWORD,
   {
-    host: process.env.INVENTORY_DB_HOST,
+    host: 'localhost',
     port: process.env.INVENTORY_DB_PORT,
     dialect: 'postgres'
   }
@@ -37,7 +37,7 @@ sequelize.sync()
 
 // Routes
 // GET all movies
-app.get('/movies', async (req, res) => {
+app.get('/', async (req, res) => {
   try {
     const { title } = req.query;
     let movies;
@@ -53,7 +53,7 @@ app.get('/movies', async (req, res) => {
 });
 
 // POST new movie
-app.post('/movies', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
     const movie = await Movie.create(req.body);
     res.status(201).json(movie);
@@ -63,7 +63,7 @@ app.post('/movies', async (req, res) => {
 });
 
 // DELETE all movies
-app.delete('/movies', async (req, res) => {
+app.delete('/', async (req, res) => {
   try {
     await Movie.destroy({ where: {} });
     res.status(204).send();
@@ -73,7 +73,7 @@ app.delete('/movies', async (req, res) => {
 });
 
 // GET movie by id
-app.get('/movies/:id', async (req, res) => {
+app.get('/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
     if (movie) {
@@ -87,7 +87,7 @@ app.get('/movies/:id', async (req, res) => {
 });
 
 // PUT update movie
-app.put('/movies/:id', async (req, res) => {
+app.put('/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
     if (movie) {
@@ -102,7 +102,7 @@ app.put('/movies/:id', async (req, res) => {
 });
 
 // DELETE movie by id
-app.delete('/movies/:id', async (req, res) => {
+app.delete('/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
     if (movie) {
@@ -117,6 +117,6 @@ app.delete('/movies/:id', async (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+app.listen(port, '192.168.56.11', () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

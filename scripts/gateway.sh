@@ -6,12 +6,11 @@ if $SCRIPT_DIR/checkNodeNpm.sh; then
     cd $GATEWAY_DIR || exit
 
     if [ -d "node_modules" ]; then
-        echo "Local dependencies probably installed."
+        echo "Local dependencies are already installed."
     else
         npm install express axios dotenv http-proxy-middleware
-        echo "Global dependencies are already installed."
+        echo "Local dependencies installed."
     fi
-
 else
     echo "Node.js and npm check failed."
     exit 1

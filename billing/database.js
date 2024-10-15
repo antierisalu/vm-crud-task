@@ -1,10 +1,9 @@
 import pkg from 'pg';
 const { Pool } = pkg;
 
-
 const pool = new Pool({
   user: process.env.BILLING_DB_USER,
-  host: process.env.BILLING_DB_HOST,
+  host: 'localhost',
   database: process.env.BILLING_DB_NAME,
   password: process.env.BILLING_DB_PASSWORD,
   port: process.env.BILLING_DB_PORT,
