@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo "BILLING_DIR: $BILLING_DIR"
-echo "INVENTORY_DIR: $INVENTORY_DIR"
-echo "GATEWAY_DIR: $GATEWAY_DIR"

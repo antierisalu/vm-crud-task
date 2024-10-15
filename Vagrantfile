@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
     g.vm.network "private_network", ip: "192.168.56.10"  # Example private IP
     g.vm.network "forwarded_port", guest: 3000, host: 3000  # API Gateway port
     g.vm.provision "shell", path: "./scripts/gateway.sh"
-    g.vm.provision "shell", path: "./scripts/pm2.sh", args: "gateway"
+    g.vm.provision "shell", run: "always", path: "./scripts/pm2.sh", args: "gateway"
   end
 
   config.vm.define "inventory" do |i|
@@ -34,8 +34,7 @@ Vagrant.configure("2") do |config|
     i.vm.network "private_network", ip: "192.168.56.11"  # Example private IP
     i.vm.network "forwarded_port", guest: 4000, host: 4000  # inventory API port
     i.vm.provision "shell", path: "./scripts/inventory.sh"
-    i.vm.provision "shell", path: "./scripts/pm2.sh", args: "inventory"
-
+    i.vm.provision "shell", run: "always", path: "./scripts/pm2.sh", args: "inventory"
   end
 
   config.vm.define "billing" do |b|
@@ -45,7 +44,7 @@ Vagrant.configure("2") do |config|
     b.vm.network "forwarded_port", guest: 5000, host: 5000  # Billing API port
     b.vm.network "forwarded_port", guest: 5672, host: 5672  # RabbitMQ
     b.vm.provision "shell", path: "./scripts/billing.sh"
-    b.vm.provision "shell", path: "./scripts/pm2.sh", args: "billing"
+    b.vm.provision "shell", run: "always", path: "./scripts/pm2.sh", args: "billing"
   end
 
 end

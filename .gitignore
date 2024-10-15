@@ -1,3 +1,4 @@
-/api-gateway/node_modules
+/gateway/node_modules
 /billing/node_modules 
 /inventory/node_modules
+.vagrant
