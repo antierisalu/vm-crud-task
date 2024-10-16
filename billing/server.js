@@ -8,9 +8,18 @@ dotenv.config({ path: '../.env' });
 const app = express();
 const port = process.env.BILLING_PORT || 5000;
 
+const checkClientIP = (req, res, next) => {
+  const clientIP = req.ip;
+  if (clientIP === process.env.GATEWAY_HOST) {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access denied' });
+  }
+};
+
+app.use(checkClientIP);
 app.use(express.json());
 
-// Ensure the orders table exists when the server starts
 ensureOrdersTableExists();
 
 app.post('/', async (req, res) => {
@@ -29,11 +38,10 @@ app.post('/', async (req, res) => {
     res.status(200).send('Order received and sent to queue.');
   } catch (error) {
     console.error('Error sending to RabbitMQ:', error);
-    // Still return success to the client
-    res.status(200).send('Order received.');
+    res.status(200).send('Order received, waiting for consumer start.');
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://${process.env.BILLING_DB_HOST}:${port}`);
+  console.log(`Server is running on ${process.env.GATEWAY_URL}/billing`);
 });

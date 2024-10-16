@@ -1,11 +1,21 @@
 import express from 'express';
 import { Sequelize, DataTypes } from 'sequelize';
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 const app = express();
 const port = process.env.INVENTORY_PORT;
 
+const checkClientIP = (req, res, next) => {
+  const clientIP = req.ip;
+  if (clientIP === process.env.GATEWAY_HOST) {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access denied' });
+  }
+};
+
+app.use(checkClientIP);
 app.use(express.json());
 
 // Database connection
@@ -36,7 +46,7 @@ const Movie = sequelize.define('movie', {
 sequelize.sync()
 
 // Routes
-// GET all movies
+// GET all movies or by title
 app.get('/', async (req, res) => {
   try {
     const { title } = req.query;
@@ -52,7 +62,7 @@ app.get('/', async (req, res) => {
   }
 });
 
-// POST new movie
+// new movie
 app.post('/', async (req, res) => {
   try {
     const movie = await Movie.create(req.body);
@@ -62,7 +72,7 @@ app.post('/', async (req, res) => {
   }
 });
 
-// DELETE all movies
+// all movies
 app.delete('/', async (req, res) => {
   try {
     await Movie.destroy({ where: {} });
@@ -72,7 +82,7 @@ app.delete('/', async (req, res) => {
   }
 });
 
-// GET movie by id
+// movie by id
 app.get('/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
@@ -86,7 +96,7 @@ app.get('/:id', async (req, res) => {
   }
 });
 
-// PUT update movie
+// update movie
 app.put('/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
@@ -101,7 +111,6 @@ app.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE movie by id
 app.delete('/:id', async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
@@ -117,6 +126,6 @@ app.delete('/:id', async (req, res) => {
 });
 
 // Start server
-app.listen(port, '192.168.56.11', () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on ${process.env.GATEWAY_URL}/inventory`);
 });

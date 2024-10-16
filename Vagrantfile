@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
     config.vm.box = "ubuntu/focal64"
     i.vm.hostname = "inventory"
     i.vm.network "private_network", ip: "192.168.56.11"  # Example private IP
-    i.vm.network "forwarded_port", guest: 4000, host: 4000  # inventory API port
+    i.vm.network "forwarded_port", guest: 8080, host: 8080  # inventory API port
     i.vm.provision "shell", path: "./scripts/inventory.sh"
     i.vm.provision "shell", run: "always", path: "./scripts/pm2.sh", args: "inventory"
   end

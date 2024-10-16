@@ -35,7 +35,7 @@ app.use('/movies', inventoryProxy);
 app.use('/billing', billingProxy);
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Proxy server running at http://${process.env.GATEWAY_HOST}:${port}/`);
+    console.log(`Proxy server running at ${process.env.GATEWAY_URL}/`);
     console.log(`Proxying /movies requests to ${process.env.GATEWAY_INVENTORY_URL}`);
     console.log(`Proxying /billing requests to ${process.env.GATEWAY_BILLING_URL}`);
 });
