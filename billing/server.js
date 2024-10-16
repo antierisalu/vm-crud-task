@@ -10,7 +10,7 @@ const port = process.env.BILLING_PORT || 5000;
 
 const checkClientIP = (req, res, next) => {
   const clientIP = req.ip;
-  if (clientIP === process.env.GATEWAY_HOST) {
+  if (clientIP === `::ffff:${process.env.GATEWAY_HOST}`) {
     next();
   } else {
     res.status(403).json({ message: 'Access denied' });

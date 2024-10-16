@@ -5,10 +5,12 @@ dotenv.config({ path: '../.env' });
 
 const app = express();
 const port = process.env.INVENTORY_PORT;
+console.log("keke", process.env.GATEWAY_HOST);
 
 const checkClientIP = (req, res, next) => {
   const clientIP = req.ip;
-  if (clientIP === process.env.GATEWAY_HOST) {
+  console.log(clientIP);
+  if (clientIP === `::ffff:${process.env.GATEWAY_HOST}`) {
     next();
   } else {
     res.status(403).json({ message: 'Access denied' });
