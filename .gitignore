@@ -1,4 +1,2 @@
-/gateway/node_modules
-/billing/node_modules 
-/inventory/node_modules
-/.vagrant
+**/node_modules/
+**/.vagrant/
