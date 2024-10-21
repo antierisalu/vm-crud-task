@@ -2,6 +2,8 @@
 
 Subject of the project was to create a three VM-s with separate services and databases.
 
+![architecture](https://01.kood.tech/git/root/public/media/branch/master/subjects/devops/crud-master/resources/crud-master-diagram.png)
+
 [log from terminal](terminal.md) for audit questions.
 
 To run the project you need to have Vagrant and VirtualBox installed. But as of right now Vagrant does not support VirtualBox 7.1, so you need to install VirtualBox 7.0 or lower.
